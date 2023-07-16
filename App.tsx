@@ -67,7 +67,7 @@ export default function App() {
             quality: 1,
             width: 320,
             height: 440,
-          }
+          },
         );
 
         let link = document.createElement('a');
