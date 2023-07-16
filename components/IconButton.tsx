@@ -1,7 +1,13 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-export default function IconButton({ icon, label, onPress }) {
+export type IconButtonProps = {
+  icon: keyof typeof MaterialIcons.glyphMap;
+  label: string;
+  onPress: () => void;
+};
+
+export default function IconButton({ icon, label, onPress }: IconButtonProps) {
   return (
     <Pressable style={styles.iconButton} onPress={onPress}>
       <MaterialIcons name={icon} size={24} color="#fff" />

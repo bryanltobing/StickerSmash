@@ -1,7 +1,13 @@
 import { StyleSheet, View, Pressable, Text } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-export default function Button({ label, theme, onPress }) {
+export type ButtonProps = {
+  label: string;
+  theme?: 'primary';
+  onPress: () => void;
+};
+
+export default function Button({ label, theme, onPress }: ButtonProps) {
   if (theme === 'primary') {
     return (
       <View
@@ -10,7 +16,10 @@ export default function Button({ label, theme, onPress }) {
           { borderWidth: 4, borderColor: '#ffd33d', borderRadius: 18 },
         ]}
       >
-        <Pressable style={[styles.button, { backgroundColor: '#fff' }]} onPress={onPress}>
+        <Pressable
+          style={[styles.button, { backgroundColor: '#fff' }]}
+          onPress={onPress}
+        >
           <FontAwesome
             name="picture-o"
             size={18}
@@ -27,10 +36,7 @@ export default function Button({ label, theme, onPress }) {
 
   return (
     <View style={styles.buttonContainer}>
-      <Pressable
-        style={styles.button}
-        onPress={onPress}
-      >
+      <Pressable style={styles.button} onPress={onPress}>
         <Text style={styles.buttonLabel}>{label}</Text>
       </Pressable>
     </View>
