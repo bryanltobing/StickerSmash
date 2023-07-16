@@ -1,4 +1,4 @@
-import { View, Image } from 'react-native';
+import { View, Image, ImageSourcePropType } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -8,6 +8,7 @@ import Animated, {
 import {
   TapGestureHandler,
   PanGestureHandler,
+  PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 
 // Temporary hacks for web
@@ -19,7 +20,15 @@ if (typeof window !== 'undefined') {
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export default function EmojiSticker({ imageSize, stickerSource }) {
+type EmojiSticker = {
+  imageSize: number;
+  stickerSource: ImageSourcePropType;
+};
+
+export default function EmojiSticker({
+  imageSize,
+  stickerSource,
+}: EmojiSticker) {
   const scaleImage = useSharedValue(imageSize);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -39,7 +48,10 @@ export default function EmojiSticker({ imageSize, stickerSource }) {
     },
   });
 
-  const onDrag = useAnimatedGestureHandler({
+  const onDrag = useAnimatedGestureHandler<
+    PanGestureHandlerGestureEvent,
+    { translateX: number; translateY: number }
+  >({
     onStart: (_event, context) => {
       (context.translateX = translateX.value),
         (context.translateY = translateY.value);
@@ -66,6 +78,7 @@ export default function EmojiSticker({ imageSize, stickerSource }) {
   return (
     <PanGestureHandler onGestureEvent={onDrag}>
       <AnimatedView style={[containerStyle, { top: -350 }]}>
+        {/* @ts-ignore TODO: remove ts ignore */}
         <TapGestureHandler onGestureEvent={onDoubleTap} numberOfTaps={2}>
           <AnimatedImage
             source={stickerSource}

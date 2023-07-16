@@ -7,7 +7,6 @@ import * as MediaLibrary from 'expo-media-library';
 import { captureRef } from 'react-native-view-shot';
 import domtoimage from 'dom-to-image';
 
-import PlaceholderImage from './assets/images/background-image.png';
 import ImageViewer from './components/ImageViewer';
 import Button from './components/Button';
 import IconButton from './components/IconButton';
@@ -17,7 +16,7 @@ import EmojiList from './components/EmojiList';
 import EmojiSticker from './components/EmojiSticker';
 
 export default function App() {
-  const imageRef = useRef();
+  const imageRef = useRef<View>(null);
   const [status, requestPermission] = MediaLibrary.usePermissions();
 
   if (status === null) {
@@ -44,15 +43,15 @@ export default function App() {
   };
 
   const onSaveImageAsync = async () => {
-    if(Platform.OS !== 'web') {
+    if (Platform.OS !== 'web') {
       try {
         const localUri = await captureRef(imageRef, {
           height: 440,
           quality: 1,
         });
-  
+
         await MediaLibrary.saveToLibraryAsync(localUri);
-  
+
         if (localUri) {
           alert('Saved!');
         }
@@ -61,18 +60,22 @@ export default function App() {
       }
     } else {
       try {
-        const dataUrl = await domtoimage.toJpeg(imageRef.current, {
-          quality: 1,
-          width: 320,
-          height: 440
-        })
+        // has typecasting intentionally to make this work with web that accepts type Node as element
+        const dataUrl = await domtoimage.toJpeg(
+          imageRef.current as unknown as Node,
+          {
+            quality: 1,
+            width: 320,
+            height: 440,
+          }
+        );
 
         let link = document.createElement('a');
-        link.download = `sticker-smash-${new Date().getTime()}.jpeg`
-        link.href = dataUrl
-        link.click()
-      } catch(err) {
-        console.log(err)
+        link.download = `sticker-smash-${new Date().getTime()}.jpeg`;
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        console.log(err);
       }
     }
   };
@@ -96,7 +99,7 @@ export default function App() {
       <View style={styles.imageContainer}>
         <View ref={imageRef} collapsable={false}>
           <ImageViewer
-            placeholderImageSource={PlaceholderImage}
+            placeholderImageSource={require('./assets/images/background-image.png')}
             selectedImage={selectedImage}
           />
           {pickedEmoji !== null ? (
